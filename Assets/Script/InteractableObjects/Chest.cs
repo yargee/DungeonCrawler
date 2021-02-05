@@ -15,29 +15,31 @@ public class Chest : MonoBehaviour, IInteractable
     public event UnityAction ChestInteracted;
     public event UnityAction InteractionCompleted;
 
-    private void Start()
+
+    private void Awake()
     {
         _chestContent = new List<Loot>();
         ItemsNumber = Random.Range(0, 6);
         for (int i = 0; i < ItemsNumber; i++)
         {
             Loot loot = _availableLoot[Random.Range(0, _availableLoot.Count)];            
-            //loot.ITakenFromChest += OnTakenFromChest;
-            //loot.IPuttedIntoChest += OnPuttedIntoChest;
             _chestContent.Add(loot);
+            
         }
     }
 
-    public void OnTakenFromChest(Loot loot)
+    public void RemoveItem(Loot loot)
     {
-        Debug.Log("!!!");
         _chestContent.Remove(loot);
     }
-
-    public void OnPuttedIntoChest(Loot loot)
+    public void AddItem(Loot loot)
     {
-        Debug.Log("!!!");
         _chestContent.Add(loot);
+    }
+
+    public void ChangeItemNumber(int value)
+    {
+        ItemsNumber += value;
     }
 
     public void ChangeChestStatus()

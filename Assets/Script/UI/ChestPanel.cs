@@ -9,6 +9,19 @@ public class ChestPanel : MonoBehaviour
     [SerializeField] LootView _lootTemplate;
     [SerializeField] private Transform _draggingParent;
 
+
+    public void OnTakenFromChest(LootView view)
+    {        
+        _currentChest.RemoveItem(view.Loot);
+        _currentChest.ChangeItemNumber(-1);
+    }
+
+    public void OnPuttedIntoChest(LootView view)
+    {       
+        _currentChest.AddItem(view.Loot);
+        _currentChest.ChangeItemNumber(1);
+    }
+
     private void OnDisable()
     {        
         _currentChest.ChestInteracted -= OnChestInteracted;
@@ -47,6 +60,8 @@ public class ChestPanel : MonoBehaviour
                 var newLootView = Instantiate(_lootTemplate, _lootContainer.transform);
                 newLootView.Init(_draggingParent);
                 newLootView.Render(_currentChest.GetItem(i));
+                newLootView.TakenFromChest += OnTakenFromChest;
+                newLootView.PuttedIntoChest += OnPuttedIntoChest;
             }
             _currentChest.ChangeChestStatus();
         }

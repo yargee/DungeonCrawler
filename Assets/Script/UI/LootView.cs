@@ -17,8 +17,10 @@ public class LootView : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     private Transform _draggingParent;
     private Transform _previousParent;
 
-    public event UnityAction TakenFromChest;
-    public event UnityAction PuttedIntoChest;
+    public Loot Loot => _loot;
+
+    public event UnityAction<LootView> TakenFromChest;
+    public event UnityAction<LootView> PuttedIntoChest;
 
     public void OnBeginDrag(PointerEventData eventData)
     {
@@ -42,30 +44,23 @@ public class LootView : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
 
             if (item.gameObject.TryGetComponent(out InventoryContainer container) && container.ItemSlot.IsEmpty)
             {
-                Debug.Log(container);
-                if (_loot.CheckLootСompatibility(container.ItemSlot))
+                if (Loot.CheckLootСompatibility(container.ItemSlot))
                 {
                     _currentContainer.ItemSlot.ChangeEmptyStatus(); //освобождаем контейнер из которого перетащили предмет(сундук статус не меняет, он всегда "пуст")
                     transform.SetParent(container.Container); // назначаем родителем новый контейнер 
-                    /*if (_currentContainer.ItemSlot is AnySlot) // если контейнер был сундуком, вызываем событие на удаление предмета из содержимого
+                    if (_currentContainer.ItemSlot is AnySlot) // если контейнер был сундуком, вызываем событие на удаление предмета из содержимого
                     {
-                        
-                        //TakenFromChest?.Invoke();
-                        
-                        Debug.Log(_loot + " TAKEN FROM CHEST");
-                    }*/
+                        TakenFromChest?.Invoke(this);
+                    }
 
                     _currentContainer = container;   // назначаем новый контейнер текущим
 
                     container.ItemSlot.ChangeEmptyStatus(); // меняем статус контейнера на "занят"(сундук статус не меняет, он всегда "пуст")
 
-                    /*if (_currentContainer.ItemSlot is AnySlot)  // если новый контейнер - сундук, вызываем событие на добавление предмета 
+                    if (_currentContainer.ItemSlot is AnySlot)  // если новый контейнер - сундук, вызываем событие на добавление предмета 
                     {
-                        
-                        //PuttedIntoChest?.Invoke();
-                        
-                        Debug.Log(_loot + "PUTTED INTO CHEST");
-                    }*/
+                        PuttedIntoChest?.Invoke(this);
+                    }
                     return;
                 }
             }
